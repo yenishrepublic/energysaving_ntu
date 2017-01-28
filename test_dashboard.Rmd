@@ -1,0 +1,135 @@
+---
+title: "Energy Consumption Characteristic Trends of General Library"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    theme: spacelab
+---
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+#setwd("D:/R/Web")
+library(datasets)
+#generalLibrary=read.table("generalLibrary.csv",header=TRUE,sep=",")
+generalLibrary=read.table("https://raw.githubusercontent.com/yenishrepublic/energysaving_ntu/master/generalLibrary.csv", header=TRUE,sep=",")
+# data(generalLibrary)
+```
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(ggplot2)
+library(plotly)
+```
+
+Row {.tabset data-width=100%}
+-----------------------------------------------------------------------
+### May
+```{r}
+
+trace_1 <- round(generalLibrary$mean.weekday.may.1,1)
+trace_2 <- round(generalLibrary$mean.weekday.may.2,1)
+trace_3 <- round(generalLibrary$mean.weekday.may.3,1)
+x <- generalLibrary$hr
+
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays May 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'Weekdays May 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'Weekdays May 2016', mode = 'lines+markers')%>%
+  layout(                       
+         xaxis = list(           
+            title = "Time (Hours)",      
+            showgrid = F),       
+         yaxis = list(           
+            title = "Average Energy Consumption (kWh per Hour)",
+            range=c(0,1500)),
+         legend = list(
+           orientation="h"
+         )
+  )
+
+plot
+
+```
+
+### July
+
+```{r}
+
+trace_1 <- round(generalLibrary$mean.weekday.jul.1,1)
+trace_2 <- round(generalLibrary$mean.weekday.jul.2,1)
+trace_3 <- round(generalLibrary$mean.weekday.jul.3,1)
+x <- generalLibrary$hr
+
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays July 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'Weekdays July 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'Weekdays July 2016', mode = 'lines+markers')%>%
+  layout(                       
+         xaxis = list(           
+            title = "Time (Hours)",      
+            showgrid = F),       
+         yaxis = list(           
+            title = "Average Energy Consumption (kWh per Hour)",
+            range=c(0,1500)),
+         legend= list(
+           orientation="h"
+         )
+  )
+
+plot
+
+```
+
+### September
+
+```{r}
+
+trace_1 <- round(generalLibrary$mean.weekday.sep.1,1)
+trace_2 <- round(generalLibrary$mean.weekday.sep.2,1)
+trace_3 <- round(generalLibrary$mean.weekday.sep.3,1)
+x <- generalLibrary$hr
+
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays September 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'Weekdays September 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'Weekdays September 2016', mode = 'lines+markers')%>%
+  layout(                       
+         xaxis = list(           
+            title = "Time (Hours)",      
+            showgrid = F),       
+         yaxis = list(           
+            title = "Average Energy Consumption (kWh per Hour)",
+            range=c(0,1500)),
+         legend= list(
+           orientation="h"
+         )
+  )
+
+plot
+
+```
+
+### December
+
+```{r}
+
+trace_1 <- round(generalLibrary$mean.weekday.dec.1,1)
+trace_2 <- round(generalLibrary$mean.weekday.dec.2,1)
+trace_3 <- round(generalLibrary$mean.weekday.dec.3,1)
+x <- generalLibrary$hr
+
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays December 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'Weekdays December 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'Weekdays December 2016', mode = 'lines+markers')%>%
+  layout(                       
+         xaxis = list(           
+            title = "Time (Hours)",      
+            showgrid = F),       
+         yaxis = list(           
+            title = "Average Energy Consumption (kWh per Hour)",
+            range=c(0,1500)),
+         legend= list(
+           orientation="h"
+         )
+  )
+
+plot
+
+```
