@@ -1,10 +1,12 @@
 ---
 title: "Energy Consumption Characteristic Trends of General Library"
+author: "Tony Yen"
+date: "2017¦~1¤ë30¤é"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
-    vertical_layout: fill
     theme: spacelab
+  
 ---
 ```{r global, include=FALSE}
 # load data in 'global' chunk so it can be shared by all users of the dashboard
@@ -12,6 +14,7 @@ output:
 library(datasets)
 #generalLibrary=read.table("generalLibrary.csv",header=TRUE,sep=",")
 generalLibrary=read.table("https://raw.githubusercontent.com/yenishrepublic/energysaving_ntu/master/generalLibrary.csv", header=TRUE,sep=",")
+generalLibrarybase=read.table("https://raw.githubusercontent.com/yenishrepublic/energysaving_ntu/master/generalLibrarybase.csv", header=TRUE,sep=",")
 # data(generalLibrary)
 ```
 
@@ -19,11 +22,22 @@ generalLibrary=read.table("https://raw.githubusercontent.com/yenishrepublic/ener
 library(flexdashboard)
 library(ggplot2)
 library(plotly)
+library(dygraphs)
+library(xts)
 ```
 
-Row {.tabset data-width=100%}
+Weekday Average Trends
+=====================================
+
+###
+###
+### Weekday Average Trends
+
+Row {.tabset}
 -----------------------------------------------------------------------
+
 ### May
+
 ```{r}
 
 trace_1 <- round(generalLibrary$mean.weekday.may.1,1)
@@ -31,9 +45,9 @@ trace_2 <- round(generalLibrary$mean.weekday.may.2,1)
 trace_3 <- round(generalLibrary$mean.weekday.may.3,1)
 x <- generalLibrary$hr
 
-plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays May 2014', type = 'scatter', mode = 'lines+markers') %>%
-  add_trace(y = ~trace_2, name = 'Weekdays May 2015', mode = 'lines+markers') %>%
-  add_trace(y = ~trace_3, name = 'Weekdays May 2016', mode = 'lines+markers')%>%
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'Weekdays 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'Weekdays 2016', mode = 'lines+markers')%>%
   layout(                       
          xaxis = list(           
             title = "Time (Hours)",      
@@ -59,9 +73,9 @@ trace_2 <- round(generalLibrary$mean.weekday.jul.2,1)
 trace_3 <- round(generalLibrary$mean.weekday.jul.3,1)
 x <- generalLibrary$hr
 
-plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays July 2014', type = 'scatter', mode = 'lines+markers') %>%
-  add_trace(y = ~trace_2, name = 'Weekdays July 2015', mode = 'lines+markers') %>%
-  add_trace(y = ~trace_3, name = 'Weekdays July 2016', mode = 'lines+markers')%>%
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'Weekdays 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'Weekdays 2016', mode = 'lines+markers')%>%
   layout(                       
          xaxis = list(           
             title = "Time (Hours)",      
@@ -87,9 +101,9 @@ trace_2 <- round(generalLibrary$mean.weekday.sep.2,1)
 trace_3 <- round(generalLibrary$mean.weekday.sep.3,1)
 x <- generalLibrary$hr
 
-plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays September 2014', type = 'scatter', mode = 'lines+markers') %>%
-  add_trace(y = ~trace_2, name = 'Weekdays September 2015', mode = 'lines+markers') %>%
-  add_trace(y = ~trace_3, name = 'Weekdays September 2016', mode = 'lines+markers')%>%
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'Weekdays 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'Weekdays 2016', mode = 'lines+markers')%>%
   layout(                       
          xaxis = list(           
             title = "Time (Hours)",      
@@ -115,9 +129,9 @@ trace_2 <- round(generalLibrary$mean.weekday.dec.2,1)
 trace_3 <- round(generalLibrary$mean.weekday.dec.3,1)
 x <- generalLibrary$hr
 
-plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays December 2014', type = 'scatter', mode = 'lines+markers') %>%
-  add_trace(y = ~trace_2, name = 'Weekdays December 2015', mode = 'lines+markers') %>%
-  add_trace(y = ~trace_3, name = 'Weekdays December 2016', mode = 'lines+markers')%>%
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'Weekdays 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'Weekdays 2016', mode = 'lines+markers')%>%
   layout(                       
          xaxis = list(           
             title = "Time (Hours)",      
@@ -131,5 +145,178 @@ plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays December 2014', type = 'sca
   )
 
 plot
+
+```
+
+Weekend Average Trends
+===================================== 
+
+###
+###
+### Weekend Average Trends
+
+Row {.tabset}
+-----------------------------------------------------------------------
+
+### May
+
+```{r}
+
+trace_1 <- round(generalLibrary$mean.weekend.may.1,1)
+trace_2 <- round(generalLibrary$mean.weekend.may.2,1)
+trace_3 <- round(generalLibrary$mean.weekend.may.3,1)
+x <- generalLibrary$hr
+
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'weekends 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'weekends 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'weekends 2016', mode = 'lines+markers')%>%
+  layout(                       
+         xaxis = list(           
+            title = "Time (Hours)",      
+            showgrid = F),       
+         yaxis = list(           
+            title = "Average Energy Consumption (kWh per Hour)",
+            range=c(0,1500)),
+         legend = list(
+           orientation="h"
+         )
+  )
+
+plot
+
+```
+
+### July
+
+```{r}
+
+trace_1 <- round(generalLibrary$mean.weekend.jul.1,1)
+trace_2 <- round(generalLibrary$mean.weekend.jul.2,1)
+trace_3 <- round(generalLibrary$mean.weekend.jul.3,1)
+x <- generalLibrary$hr
+
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'weekends 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'weekends 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'weekends 2016', mode = 'lines+markers')%>%
+  layout(                       
+         xaxis = list(           
+            title = "Time (Hours)",      
+            showgrid = F),       
+         yaxis = list(           
+            title = "Average Energy Consumption (kWh per Hour)",
+            range=c(0,1500)),
+         legend= list(
+           orientation="h"
+         )
+  )
+
+plot
+
+```
+
+### September
+
+```{r}
+
+trace_1 <- round(generalLibrary$mean.weekend.sep.1,1)
+trace_2 <- round(generalLibrary$mean.weekend.sep.2,1)
+trace_3 <- round(generalLibrary$mean.weekend.sep.3,1)
+x <- generalLibrary$hr
+
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'weekends 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'weekends 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'weekends 2016', mode = 'lines+markers')%>%
+  layout(                       
+         xaxis = list(           
+            title = "Time (Hours)",      
+            showgrid = F),       
+         yaxis = list(           
+            title = "Average Energy Consumption (kWh per Hour)",
+            range=c(0,1500)),
+         legend= list(
+           orientation="h"
+         )
+  )
+
+plot
+
+```
+
+### December
+
+```{r}
+
+trace_1 <- round(generalLibrary$mean.weekend.dec.1,1)
+trace_2 <- round(generalLibrary$mean.weekend.dec.2,1)
+trace_3 <- round(generalLibrary$mean.weekend.dec.3,1)
+x <- generalLibrary$hr
+
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'weekends 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'weekends 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'weekends 2016', mode = 'lines+markers')%>%
+  layout(                       
+         xaxis = list(           
+            title = "Time (Hours)",      
+            showgrid = F),       
+         yaxis = list(           
+            title = "Average Energy Consumption (kWh per Hour)",
+            range=c(0,1500)),
+         legend= list(
+           orientation="h"
+         )
+  )
+
+plot
+
+```
+
+Baseline Energy Consumption
+=====================================
+
+###
+###
+### Baseline Energy Consumption
+
+
+Row 
+-----------------------------------------------------------------------
+
+### Chinese New Year
+
+```{r}
+begin="2016-02-06 00"
+end="2016-02-14 23"
+
+springbase=matrix(nrow=9,ncol=24,dimnames = list(as.character(generalLibrarybase$date[1:9])),c(1:24))
+for(i in 1:24){
+  springbase[,i]=generalLibrarybase[[i+1]][1:9]
+}
+springtime=timeBasedSeq(paste(begin,"/",end,sep=""),length=length(springbase))
+spring=xts(c(t(springbase)),order.by=c(t(springtime)))
+
+dygraph(spring,main="6 - 14 Feb 2016",xlab="Time",ylab="(kWh per Hour)")%>%
+  dySeries(label = "Energy Consumption") 
+
+```
+
+
+Row 
+-----------------------------------------------------------------------
+
+### Final Exam Week
+
+```{r}
+begin="2014-01-13 00"
+end="2014-01-17 23"
+
+springbase=matrix(nrow=5,ncol=24,dimnames = list(as.character(generalLibrarybase$date[10:14])),c(1:24))
+for(i in 1:24){
+  springbase[,i]=generalLibrarybase[[i+1]][10:14]
+}
+springtime=timeBasedSeq(paste(begin,"/",end,sep=""),length=length(springbase))
+spring=xts(c(t(springbase)),order.by=c(t(springtime)))
+
+dygraph(spring,main="13 - 17 Jan 2014",xlab="Time",ylab="(kWh per Hour)")%>%
+  dySeries(label = "Energy Consumption") 
 
 ```
