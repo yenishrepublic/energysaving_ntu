@@ -1,0 +1,314 @@
+---
+title: "台大總圖書館耗能現況分析與節能措施建議"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    theme: spacelab
+---
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+#setwd("D:/R/Web")
+library(datasets)
+#generalLibrary=read.table("generalLibrary.csv",header=TRUE,sep=",")
+generalLibrary=read.table("https://raw.githubusercontent.com/yenishrepublic/energysaving_ntu/master/generalLibrary.csv", header=TRUE,sep=",")
+generalLibrarybase=read.table("https://raw.githubusercontent.com/yenishrepublic/energysaving_ntu/master/generalLibrarybase.csv", header=TRUE,sep=",")
+# data(generalLibrary)
+```
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(ggplot2)
+library(plotly)
+library(dygraphs)
+library(xts)
+library(knitr)
+library(htmltools)
+```
+
+
+基本用電狀況說明{data-navmenu="用電資料分析"}
+=====================================
+
+###基本用電狀況說明
+
+Row {data-height=400}
+-----------------------------------------------------------------------
+
+### 總圖於2009-2016年的年用電量
+
+自從2009年，台大實施電費分攤以後，總圖書館的用電量在2009-2013年逐步下降；不過自2014年起總圖的用電量逐年增加：底下是總務處提供的資訊：
+
+```{r}
+
+yr=c(2009:2016)
+ec=c(10139480,8466094,7644408,6910809,6750087,6615292,7262635,7414727)
+
+df <- data.frame(
+  "年分" = yr,
+  "年用電量(度)"= ec, 
+  stringsAsFactors = FALSE)
+
+kable(df,align='c')
+
+```
+*注：上面的計算方式為把年底電錶讀數扣掉年初的電錶讀數，中間電錶可能有做調整，因此可能和總務處提供的資料有所差異*
+
+Row {data-height=600}
+-----------------------------------------------------------------------
+
+###總圖於2009-2016年的各年度EUI ([Energy Usage Intensity](https://www.archtoolbox.com/sustainability/energy-use-intensity.html))
+
+如果和既有的標準來比較，根據生工一的劉亞綸等參考的綠建築評估手冊，[總圖的建議能源密度（EUI）為每年每平方米120kWh](#能源使用密度概念與標準建立簡介)。2009年以來總圖的EUI值如下表所列，皆明顯高於這個標準。
+
+```{r}
+
+yr=c(2009:2016)
+ec=c(10139480,8466094,7644408,6910809,6750087,6615292,7262635,7414727)/34768
+
+plot<-plot_ly(x = ~yr, y = ~ec, name = 'Weekdays 2014', type = 'scatter', mode = 'lines+markers') %>%
+  layout(
+         xaxis = list(           
+            title = "Time (Years)",      
+            showgrid = F),       
+         yaxis = list(           
+            title = "Annual EUI (kWh/m^2/yr)"
+         ),
+         legend = list(
+           orientation="h"
+         )
+  )%>%
+ add_trace(x = c(min(yr), max(yr)), y= c(120, 120) , mode = "lines", color = "red")%>%
+  add_annotations(x = 2012.5,
+                  y = 120,
+                  text = "Suugested EUI of the Building",
+                  xref = "x",
+                  yref = "y",
+                  showarrow = TRUE,
+                  arrowhead = 4,
+                  arrowsize = .5,
+                  ax = 20,
+                  ay = -40,
+                  color = "red",
+                  font = list(color = 'red')
+                  )
+
+plot
+
+```
+
+
+總圖安裝儲冰系統後的效益討論 {data-navmenu="用電資料分析" data-orientation=columns}
+=====================================
+
+Colunm
+-----------------------------------------------------------------------
+
+### 2014-2016七月平日的平均逐時用電特性 
+
+```{r fig.align='center'}
+
+trace_1 <- round(generalLibrary$mean.weekday.jul.1,1)
+trace_2 <- round(generalLibrary$mean.weekday.jul.2,1)
+trace_3 <- round(generalLibrary$mean.weekday.jul.3,1)
+x <- generalLibrary$hr
+
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'Weekdays 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'Weekdays 2016', mode = 'lines+markers')%>%
+  layout(                       
+         xaxis = list(           
+            title = "Time (Hours)",      
+            showgrid = F),       
+         yaxis = list(           
+            title = "Average Energy Consumption (kWh per Hour)",
+            range=c(0,1500)),
+         legend= list(
+           orientation="h"
+         )
+  )
+
+plot
+
+```
+
+### 2014-2016十二月平日的平均逐時用電特性
+
+```{r}
+
+trace_1 <- round(generalLibrary$mean.weekday.dec.1,1)
+trace_2 <- round(generalLibrary$mean.weekday.dec.2,1)
+trace_3 <- round(generalLibrary$mean.weekday.dec.3,1)
+x <- generalLibrary$hr
+
+plot<-plot_ly(x = ~x, y = ~trace_1, name = 'Weekdays 2014', type = 'scatter', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_2, name = 'Weekdays 2015', mode = 'lines+markers') %>%
+  add_trace(y = ~trace_3, name = 'Weekdays 2016', mode = 'lines+markers')%>%
+  layout(                       
+         xaxis = list(           
+            title = "Time (Hours)",      
+            showgrid = F),       
+         yaxis = list(           
+            title = "Average Energy Consumption (kWh per Hour)",
+            range=c(0,1500)),
+         legend= list(
+           orientation="h"
+         )
+  )
+
+plot
+
+```
+
+Colunm
+-----------------------------------------------------------------------
+### {data-height=100}
+
+```{r fig.align='center'}
+
+  h1("總圖安裝儲冰系統後的效益討論")
+
+```
+
+### {data-height=900}
+
+```{r fig.align='center'}
+  br()
+```
+
+左上是2014年到2016年三個年份七月平日的平均逐時用電特性。我們可以看到，2014年和2015、2016兩年的逐時用電特性有很明顯的差異，尤其是夜晚離峰用電，2015年以後明顯大增。這個現象主要是由於[台電實施時間電價](http://www.energypark.org.tw/Data/10504.pdf)以後，離峰（22:30-07:30）跟尖峰時段（07:30-22:30）的電價出現顯著差異；夏季時，離峰電價為每度電1.32元，尖峰電價則為每度電3.11元。為了讓尖峰用電分散，總圖安裝了儲冰系統，大概的功能就是夜晚製冰，白天的時候通風系統內的空氣先和儲冰進行熱交換降溫，以降低主機的冷卻負載。
+ 
+雖然儲冰系統讓尖峰用電下降，讓2015年和2016年的總電費比2014年下降；然而它卻也讓總用電量增加。2016年7月與2014年同期相比，每天大約增加了2400kWh的用電量。
+
+這樣的手段合理嗎？在目前，台灣夏季用電面臨的主要問題還是尖峰需求過高，因此採取時間電價這個策略以壓低尖峰用電。不過，還是有必要檢討使用時段用電狀況以及儲冰系統效能，進而讓用電量下降。比如說，從圖表可以看出，2016年7月的早上7點到9點的耗電增加如果對應到的是儲冰系統延長（或其他某種管理手段），成效顯然不顯著（除非它的目的純粹只是要降低早上10點的用電尖峰約42kWh）。
+
+```{r fig.align='center'}
+
+  df <- data.frame(
+  "單位：度" = c("2014/7平日平均耗電量","2016/7平日平均耗電量","儲冰系統實施後節能量"),
+  "十一時"= c(1457.331,1471.086,934.458), 
+  "十五時" = c(1019.138,1041.551,958.684),
+  "二十時" = c(438.1928,429.5355,-24.2260),
+  stringsAsFactors = FALSE)
+
+  kable(df,align='c')
+  
+```
+*注：這三個時刻是台灣夏季用電的三個高峰*
+
+不過，真正需要做深入檢討的，其實是總圖的冬季耗電量。
+
+左下圖可以看出總圖在12月份的夜間用電量，2015年起因為儲冰系統的設置而大幅提高，然而冬季使用儲冰系統的效益有限，尖峰用電時段的用電並沒有因此節省多少。2016年12月與2014年12月的用電特性相比，不僅每日用電量增加將近2700度，電費也沒有得到節省。因此我們認為，總圖的管理單位應該對於儲冰系統的使用與否和運轉時間做出更完善的規劃。
+
+**在冬季，儲冰系統並沒有有效下降尖峰用電，然而夜間的耗電依然巨量。因此，儲冰系統在冬季其實是不必要的，而在春秋兩季則需要衡量來日的氣象條件以做判斷。**
+
+
+
+平假日差異討論 {data-navmenu="用電資料分析" data-orientation=columns}
+=====================================
+
+
+季節性變化與基礎耗能量的估計 {data-navmenu="用電資料分析" data-orientation=columns}
+=====================================
+
+
+夏季耗能與溫度關聯初步討論 {data-navmenu="用電資料分析" data-orientation=columns}
+=====================================
+
+
+照明 {data-navmenu="可行節能策略討論" data-orientation=columns}
+=====================================
+
+
+空調通風控制系統 {data-navmenu="可行節能策略討論" data-orientation=columns}
+=====================================
+
+
+使用密度管理{data-navmenu="可行節能策略討論" data-orientation=columns}
+=====================================
+
+
+更完整的節能資訊與規劃{data-navmenu="可行節能策略討論" data-orientation=columns}
+=====================================
+
+
+未來建議統整與行動
+=====================================
+
+
+能源使用密度概念與標準建立簡介{data-navmenu="附件"}
+=====================================
+
+### 能源使用密度概念與標準建立簡介
+
+Row
+-----------------------------------------------------------------------
+
+### 
+能源使用密度（EUI）是一棟建築一年平均每平方公尺樓地板面積所消耗能源。目前學校各個建築已經可以由前述的兩個網站中取得資料（[逐時用電資料](http://140.112.166.97/power/index.aspx)和[各建物的樓地板面積資料](http://map.ntu.edu.tw/mobile.html#mappage)）求出，不過單純算出EUI的數值並沒有太大的意義！根據建築物的功能來和建議標準做比較才能更精確的評判能源使用是否過量。
+
+那麼，應該要如何得到建議基準呢？如果建築物類型剛好有在能源局的評估手冊上出現，是可以直接拿能源局的建議標準來做比較的；不過更周全的做法，是把建築物的空間使用做更詳盡的分區，把每一區的建議值用該區域的面積做加權平均。以這次生工系的學弟妹們的研究為例，他們將總圖區分成展覽、圖書、辦公、學習、電腦等使用空間，再利用不同使用空間的建議值和不同空間的面積做加總，就能計算出總圖的建議EUI。
+
+上述的加權值除以總面積即為EUI的建議值，公式如下：
+$$EUI_{standard}=\dfrac {\sum_i EUI_{i}\times A_i} {\sum_i A_i}$$
+
+其中$EUI_{standard}$為EUI的建議值，$EUI_{i}$為第i種空間的EUI建議值，$A_i$為第i種空間的總面積。
+
+```{r fig.align='center'}
+
+  EUI=c(153,111,120,440,130,NA) 
+  Area=c(805,25430,1263,330,6940,34768)
+
+  df <- data.frame(
+  "空間" = c("單位","展覽","圖書","辦公","電腦","學習","總體"),
+  "EUI 標準"= c("度每年每平方米",EUI), 
+  "總面積" = c("平方米",Area),
+  "加權(EUI標準乘上面積)" = c("度/年",EUI*Area),
+  stringsAsFactors = FALSE)
+
+  kable(df,align='c')
+  
+```
+*注：各空間的總面積是劉亞綸等根據總圖各樓層的樓地板面積以及各樓層平面圖估算而出。*
+
+
+資料選取範圍說明 {data-navmenu="附件"}
+=====================================
+
+###資料選取範圍說明
+
+Row {}
+-----------------------------------------------------------------------
+
+###
+
+```{r fig.align='center'}
+  
+  br()
+  
+```
+
+* 本網站中都以各月份中連續4週週一到週日用電資料為逐時平均值的計算範圍；惟9月之資料是開學後一個月的資料。
+* 底下說明各年、各月份選取資料的日期區間：
+
+```{r fig.align='center'}
+  
+  df <- data.frame(
+  Years = c(2014:2016),
+  May = c("05/05-06/01","05/04-05/31","05/02-05/29"), 
+  July = c("06/30-07/27","07/06-08/02","07/04-07/31"),
+  September = c("09/15-10/12","09/14-10/11","09/12-10/09"),
+  December = c("12/01-12/28","11/30-12/27","11/28-12/25"),
+  stringsAsFactors = FALSE)
+
+  kable(df,align='c')
+  
+```
+
+
+延伸閱讀 {data-navmenu="附件"}
+=====================================
+
+
+製作者 {data-navmenu="附件"}
+=====================================
