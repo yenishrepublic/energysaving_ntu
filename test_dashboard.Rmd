@@ -24,6 +24,7 @@ library(ggplot2)
 library(plotly)
 library(dygraphs)
 library(xts)
+library(knitr)
 ```
 
 Weekday Average Trends
@@ -148,6 +149,7 @@ plot
 
 ```
 
+
 Weekend Average Trends
 ===================================== 
 
@@ -270,13 +272,13 @@ plot
 
 ```
 
+
 Baseline Energy Consumption
 =====================================
 
 ###
 ###
 ### Baseline Energy Consumption
-
 
 Row 
 -----------------------------------------------------------------------
@@ -319,4 +321,33 @@ spring=xts(c(t(springbase)),order.by=c(t(springtime)))
 dygraph(spring,main="13 - 17 Jan 2014",xlab="Time",ylab="(kWh per Hour)")%>%
   dySeries(label = "Energy Consumption") 
 
+```
+
+
+Details on Selected Data
+=====================================
+###
+###
+### Details on Selected Data
+
+Row 
+-----------------------------------------------------------------------
+
+### 
+
+> 除春節和期末考週的時間序列外，本網站中都以各月份中連續4週週一到週日用電資料為逐時平均值的計算範圍；惟9月之資料是開學後一個月的資料。
+> 底下說明各年、各月份選取資料的日期區間：
+
+```{r fig.align='center'}
+
+  df <- data.frame(
+  Years = c(2014:2016),
+  May = c("05/05-06/01","05/04-05/31","05/02-05/29"), 
+  July = c("06/30-07/27","07/06-08/02","07/04-07/31"),
+  September = c("09/15-10/12","09/14-10/11","09/12-10/09"),
+  December = c("12/01-12/28","11/30-12/27","11/28-12/25"),
+  stringsAsFactors = FALSE)
+
+  kable(df,align='c')
+  
 ```
